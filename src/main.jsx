@@ -88,58 +88,42 @@ function App() {
   const [modal, setModal] = useState(null);
   const [activeProject, setActiveProject] = useState(projects[0]);
   const rail = useRef(null);
+  const scrollTarget = useRef(0);
+  const scrollFrame = useRef(null);
 
   useEffect(() => {
     document.title = 'Sherhan Hossain — Architect & Designer';
     const onKey = e => e.key === 'Escape' && setModal(null);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
+    };
   }, [introVariant]);
 
-  useEffect(() => {
+  const animateProjectScroll = () => {
     const element = rail.current;
-    if (!element) return undefined;
-    let frame = null;
+    if (!element) return;
+    const remaining = scrollTarget.current - element.scrollLeft;
+    if (Math.abs(remaining) < 0.5) {
+      element.scrollLeft = scrollTarget.current;
+      scrollFrame.current = null;
+      return;
+    }
+    element.scrollLeft += remaining * 0.14;
+    scrollFrame.current = requestAnimationFrame(animateProjectScroll);
+  };
 
-    const onWheel = e => {
-      e.preventDefault();
-      const axisDelta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-      const unit = e.deltaMode === 1 ? 18 : e.deltaMode === 2 ? element.clientWidth : 1;
-      const delta = axisDelta * unit;
-
-      if (frame) cancelAnimationFrame(frame);
-
-      // Trackpads already provide small, frequent deltas and feel best one-to-one.
-      if (Math.abs(delta) < 24) {
-        element.scrollLeft += delta;
-        frame = null;
-        return;
-      }
-
-      // Ease a single mouse-wheel notch briefly without storing momentum.
-      const from = element.scrollLeft;
-      const maxScroll = element.scrollWidth - element.clientWidth;
-      const distance = Math.sign(delta) * Math.min(Math.abs(delta) * 0.62, 92);
-      const to = Math.max(0, Math.min(maxScroll, from + distance));
-      const startedAt = performance.now();
-      const duration = 90;
-
-      const step = now => {
-        const progress = Math.min((now - startedAt) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        element.scrollLeft = from + (to - from) * eased;
-        frame = progress < 1 ? requestAnimationFrame(step) : null;
-      };
-
-      frame = requestAnimationFrame(step);
-    };
-
-    element.addEventListener('wheel', onWheel, { passive: false });
-    return () => {
-      element.removeEventListener('wheel', onWheel);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
+  const wheelProjects = e => {
+    const element = rail.current;
+    if (!element) return;
+    e.preventDefault();
+    const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    if (!scrollFrame.current) scrollTarget.current = element.scrollLeft;
+    scrollTarget.current = Math.max(0, Math.min(maxScroll, scrollTarget.current + delta * 1.15));
+    if (!scrollFrame.current) scrollFrame.current = requestAnimationFrame(animateProjectScroll);
+  };
 
   const openProject = project => { setActiveProject(project); setModal('project'); };
 
@@ -197,7 +181,7 @@ function App() {
 
         <section className="works-panel">
           <div className="works-heading"><h2>WORK</h2><span>HOVER + SCROLL →</span></div>
-          <div className="works-rail" ref={rail}>
+          <div className="works-rail" ref={rail} onWheel={wheelProjects}>
             {projects.map((project, index) => <button className="work-card" key={project.title} onClick={() => openProject(project)} aria-label={`Open ${project.title}`}>
               <img src={project.image} alt=""/>
               <span><b>{String(index + 1).padStart(2, '0')}</b><em>{project.title}</em><small>{project.year}</small></span>
