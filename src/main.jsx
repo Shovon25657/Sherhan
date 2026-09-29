@@ -104,7 +104,7 @@ function App() {
     <main className="stage">
       <section className="portfolio-shell" aria-label="Sherhan Hossain architecture portfolio">
         <header className="topbar">
-          <img className="avatar" src="/dp.jpg" alt="Sherhan Hossain"/>
+          <img className="avatar" src={`${import.meta.env.BASE_URL}dp.jpg`} alt="Sherhan Hossain"/>
           <nav aria-label="Main navigation">
             <button aria-label="Home" data-label="HOME"><SvgIcon name="home"/></button>
             <button aria-label="About Sherhan" data-label="ABOUT" onClick={() => setModal('contact')}><SvgIcon name="user"/></button>
