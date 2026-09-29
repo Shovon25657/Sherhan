@@ -8,6 +8,11 @@ const projects = [
   { title: 'Folded Light', type: 'Cultural', year: '2024', location: 'Sylhet', image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=88', summary: 'A public pavilion composed as a sequence of folded planes, animated throughout the day by movement and changing sunlight.' },
   { title: 'House No. 08', type: 'Residential', year: '2024', location: 'Gazipur', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=88', summary: 'A low, horizontal residence framing long garden views and generous shared rooms for a multi-generational family.' },
   { title: 'Common Ground', type: 'Workplace', year: '2023', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=88', summary: 'A flexible studio shaped by warm timber, honest structure and shared tables for focus, exchange and creative work.' },
+  { title: 'Riverstone Retreat', type: 'Hospitality', year: '2023', location: 'Bandarban', image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=88', summary: 'A hillside retreat that follows the natural contours, pairing local stone and timber with framed views across the valley.' },
+  { title: 'The Green Spine', type: 'Residential', year: '2022', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=88', summary: 'A compact urban home organised around a planted circulation spine that carries light and air through every level.' },
+  { title: 'Arc Gallery', type: 'Cultural', year: '2022', location: 'Rajshahi', image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&w=1200&q=88', summary: 'A calm sequence of vaulted rooms creates an adaptable setting for exhibitions, workshops and public gatherings.' },
+  { title: 'Terracotta Court', type: 'Mixed Use', year: '2021', location: 'Khulna', image: 'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1200&q=88', summary: 'A shaded courtyard and perforated terracotta screens temper the tropical climate while giving the building a distinct civic identity.' },
+  { title: 'Lightwell Studio', type: 'Workplace', year: '2021', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=88', summary: 'An adaptive workspace centred on a generous lightwell, with flexible rooms designed for collaboration and focused making.' },
 ];
 
 const SvgIcon = ({ name, size = 22 }) => {
@@ -83,18 +88,41 @@ function App() {
   const [modal, setModal] = useState(null);
   const [activeProject, setActiveProject] = useState(projects[0]);
   const rail = useRef(null);
+  const scrollTarget = useRef(0);
+  const scrollFrame = useRef(null);
 
   useEffect(() => {
     document.title = 'Sherhan Hossain — Architect & Designer';
     const onKey = e => e.key === 'Escape' && setModal(null);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
+    };
   }, [introVariant]);
 
+  const animateProjectScroll = () => {
+    const element = rail.current;
+    if (!element) return;
+    const remaining = scrollTarget.current - element.scrollLeft;
+    if (Math.abs(remaining) < 0.5) {
+      element.scrollLeft = scrollTarget.current;
+      scrollFrame.current = null;
+      return;
+    }
+    element.scrollLeft += remaining * 0.14;
+    scrollFrame.current = requestAnimationFrame(animateProjectScroll);
+  };
+
   const wheelProjects = e => {
-    if (!rail.current) return;
+    const element = rail.current;
+    if (!element) return;
     e.preventDefault();
-    rail.current.scrollLeft += e.deltaY || e.deltaX;
+    const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    if (!scrollFrame.current) scrollTarget.current = element.scrollLeft;
+    scrollTarget.current = Math.max(0, Math.min(maxScroll, scrollTarget.current + delta * 1.15));
+    if (!scrollFrame.current) scrollFrame.current = requestAnimationFrame(animateProjectScroll);
   };
 
   const openProject = project => { setActiveProject(project); setModal('project'); };
@@ -104,7 +132,9 @@ function App() {
     <main className="stage">
       <section className="portfolio-shell" aria-label="Sherhan Hossain architecture portfolio">
         <header className="topbar">
-          <img className="avatar" src={`${import.meta.env.BASE_URL}dp.jpg`} alt="Sherhan Hossain"/>
+          <div className="avatar-frame">
+            <img className="avatar" src={`${import.meta.env.BASE_URL}dp.jpg`} alt="Sherhan Hossain"/>
+          </div>
           <nav aria-label="Main navigation">
             <button aria-label="Home" data-label="HOME"><SvgIcon name="home"/></button>
             <button aria-label="About Sherhan" data-label="ABOUT" onClick={() => setModal('contact')}><SvgIcon name="user"/></button>
