@@ -88,41 +88,20 @@ function App() {
   const [modal, setModal] = useState(null);
   const [activeProject, setActiveProject] = useState(projects[0]);
   const rail = useRef(null);
-  const scrollTarget = useRef(0);
-  const scrollFrame = useRef(null);
 
   useEffect(() => {
     document.title = 'Sherhan Hossain — Architect & Designer';
     const onKey = e => e.key === 'Escape' && setModal(null);
     window.addEventListener('keydown', onKey);
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
-    };
+    return () => window.removeEventListener('keydown', onKey);
   }, [introVariant]);
-
-  const animateProjectScroll = () => {
-    const element = rail.current;
-    if (!element) return;
-    const remaining = scrollTarget.current - element.scrollLeft;
-    if (Math.abs(remaining) < 0.5) {
-      element.scrollLeft = scrollTarget.current;
-      scrollFrame.current = null;
-      return;
-    }
-    element.scrollLeft += remaining * 0.14;
-    scrollFrame.current = requestAnimationFrame(animateProjectScroll);
-  };
 
   const wheelProjects = e => {
     const element = rail.current;
     if (!element) return;
     e.preventDefault();
     const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-    const maxScroll = element.scrollWidth - element.clientWidth;
-    if (!scrollFrame.current) scrollTarget.current = element.scrollLeft;
-    scrollTarget.current = Math.max(0, Math.min(maxScroll, scrollTarget.current + delta * 1.15));
-    if (!scrollFrame.current) scrollFrame.current = requestAnimationFrame(animateProjectScroll);
+    element.scrollLeft += delta * 0.58;
   };
 
   const openProject = project => { setActiveProject(project); setModal('project'); };
