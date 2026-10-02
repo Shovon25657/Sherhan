@@ -74,6 +74,16 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Replaced the pale work-marquee edge fades with narrow retro coral, yellow, and cyan patterned rails.
 - Simplified the project-browser heading to `PERSONAL PORTFOLIO` and redesigned category filtering as numbered, color-coded discipline tabs with a live visible-project count.
 
+## October 2026 portfolio browser and album refinement
+
+- Replaced the colorful work-reel edge rails with narrow translucent paper fades so projects appear to pass naturally through a restrained window.
+- Reduced `PERSONAL PORTFOLIO` to a compact single-line window heading.
+- Replaced the permanently visible category tabs with a `CATEGORY` pop-up selector. `All categories` is the unnumbered default; the six real disciplines are numbered `01` through `06`.
+- Removed the `GALLERY` metadata row from individual project views.
+- Expanded every sample project to three images so the album interaction can be evaluated immediately.
+- Rebuilt the project viewer as a mouse- and touch-swipe photo album with bidirectional page-turn animation, previous/next buttons, an image counter, and a folded-corner `DRAG / SWIPE TO TURN` cue.
+- Disabled native image dragging inside the album so desktop swipe gestures remain reliable.
+
 ## Remaining work / future decisions
 
 1. Supply the client's final admin email and choose an email provider so verification codes and contact messages can be delivered in production.

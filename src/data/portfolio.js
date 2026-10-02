@@ -11,11 +11,20 @@ export const projects = [
   { title: 'Lightwell Studio', type: 'Workplace', year: '2021', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=88', summary: 'An adaptive workspace centred on a generous lightwell, with flexible rooms designed for collaboration and focused making.' },
 ];
 
+const sampleGalleryImages = [
+  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=90',
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=90',
+  'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=90',
+  'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1600&q=90',
+  'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1600&q=90',
+  'https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&w=1600&q=90',
+];
+
 // Normalise legacy samples while the database-backed dashboard is phased in.
 projects.forEach((project, index) => {
   project.id ||= project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   project.serial ||= index + 1;
-  project.images ||= [project.image];
+  project.images = [...new Set([...(project.images || [project.image]), sampleGalleryImages[(index + 1) % sampleGalleryImages.length], sampleGalleryImages[(index + 2) % sampleGalleryImages.length]])].slice(0, 3);
   const categories = ['Architecture', 'Interior Design', 'Space Planning', '3D Visualization', 'Concept Design', 'Site Consultancy'];
   if (!categories.includes(project.type)) project.type = categories[index % categories.length];
 });

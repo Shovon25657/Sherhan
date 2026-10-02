@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from 'next/link';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { projects as initialProjects, services } from './data/portfolio';
 
 const SvgIcon = ({ name, size = 22 }) => {
@@ -47,25 +47,60 @@ function ResumeModal({ close }) {
 
 function ProjectViewer({ project, close }) {
   const [slide, setSlide] = useState(0);
+  const [turn, setTurn] = useState(null);
+  const [dragging, setDragging] = useState(false);
+  const gesture = useRef(null);
   const images = project.images?.length ? project.images : [project.image];
-  const move = direction => setSlide(index => (index + direction + images.length) % images.length);
+  const move = direction => {
+    if (turn || images.length < 2) return;
+    const next = (slide + direction + images.length) % images.length;
+    setTurn({ direction, next });
+  };
+  const finishTurn = () => { if (turn) { setSlide(turn.next); setTurn(null); } };
+  const startGesture = event => {
+    if (event.target.closest('button') || turn || images.length < 2) return;
+    gesture.current = { x: event.clientX, y: event.clientY, id: event.pointerId, deltaX: 0, deltaY: 0 };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDragging(true);
+  };
+  const trackGesture = event => {
+    if (!gesture.current || gesture.current.id !== event.pointerId) return;
+    const deltaX = event.clientX - gesture.current.x;
+    const deltaY = event.clientY - gesture.current.y;
+    if (Math.abs(deltaX) > Math.abs(gesture.current.deltaX)) gesture.current.deltaX = deltaX;
+    if (Math.abs(deltaY) > Math.abs(gesture.current.deltaY)) gesture.current.deltaY = deltaY;
+  };
+  const endGesture = event => {
+    const start = gesture.current;
+    if (!start || start.id !== event.pointerId) return;
+    const deltaX = start.deltaX || event.clientX - start.x;
+    const deltaY = start.deltaY || event.clientY - start.y;
+    gesture.current = null;
+    setDragging(false);
+    if (Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY)) move(deltaX < 0 ? 1 : -1);
+  };
   return <div className="project-viewer" role="dialog" aria-modal="true" aria-label={project.title}>
     <button className="viewer-close" onClick={close} aria-label="Back to projects"><SvgIcon name="close"/></button>
-    <div className="viewer-image"><img src={images[slide]} alt={`${project.title}, view ${slide + 1}`}/>{images.length > 1 && <><button className="viewer-arrow viewer-arrow--left" onClick={() => move(-1)} aria-label="Previous image"><SvgIcon name="left"/></button><button className="viewer-arrow viewer-arrow--right" onClick={() => move(1)} aria-label="Next image"><SvgIcon name="right"/></button></>}</div>
-    <aside><span className="eyebrow">PROJECT {String(project.serial).padStart(2, '0')} / {project.type}</span><h2>{project.title}</h2><p>{project.summary}</p><dl><div><dt>LOCATION</dt><dd>{project.location}</dd></div><div><dt>YEAR</dt><dd>{project.year}</dd></div><div><dt>GALLERY</dt><dd>{slide + 1} / {images.length}</dd></div></dl></aside>
+    <div className={`viewer-image ${dragging ? 'is-dragging' : ''}`} onPointerDown={startGesture} onPointerMove={trackGesture} onPointerUp={endGesture} onPointerCancel={endGesture}>
+      <img className="album-base" src={images[slide]} alt={`${project.title}, view ${slide + 1}`} draggable="false"/>
+      {turn && <><img className={`album-page album-page--incoming album-page--${turn.direction > 0 ? 'next' : 'previous'}`} src={images[turn.next]} alt="" draggable="false"/><img className={`album-page album-page--outgoing album-page--${turn.direction > 0 ? 'next' : 'previous'}`} src={images[slide]} alt="" draggable="false" onAnimationEnd={finishTurn}/></>}
+      {images.length > 1 && <><button className="viewer-arrow viewer-arrow--left" onClick={() => move(-1)} aria-label="Previous image"><SvgIcon name="left"/></button><button className="viewer-arrow viewer-arrow--right" onClick={() => move(1)} aria-label="Next image"><SvgIcon name="right"/></button><div className="page-turn-cue" aria-hidden="true"><span>DRAG / SWIPE TO TURN</span><b>{String(slide + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}</b><i/></div></>}
+    </div>
+    <aside><span className="eyebrow">PROJECT {String(project.serial).padStart(2, '0')} / {project.type}</span><h2>{project.title}</h2><p>{project.summary}</p><dl><div><dt>LOCATION</dt><dd>{project.location}</dd></div><div><dt>YEAR</dt><dd>{project.year}</dd></div></dl></aside>
   </div>;
 }
 
 function PortfolioModal({ projects, selected, close }) {
   const categories = ['All', ...services];
   const [category, setCategory] = useState('All');
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [active, setActive] = useState(selected || null);
   const visible = category === 'All' ? projects : projects.filter(project => project.type.toLowerCase() === category.toLowerCase());
   const openProject = (event, project) => { event.currentTarget.closest('.portfolio-overlay')?.scrollTo({ top: 0 }); setActive(project); };
   if (active) return <div className="modal portfolio-overlay"><ProjectViewer project={active} close={() => setActive(null)}/></div>;
   return <div className="modal portfolio-overlay" role="dialog" aria-modal="true" aria-label="Personal portfolio">
-    <div className="portfolio-browser"><header><h2>PERSONAL<br/><em>PORTFOLIO.</em></h2><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></header>
-      <div className="category-filter"><div className="category-caption"><span>FILTER BY DISCIPLINE</span><small>{String(visible.length).padStart(2, '0')} PROJECTS</small></div><div className="category-tabs" aria-label="Project categories">{categories.map((item, index) => <button key={item} className={category === item ? 'is-active' : ''} onClick={() => setCategory(item)}><b>{String(index + 1).padStart(2, '0')}</b><span>{item}</span></button>)}</div></div>
+    <div className="portfolio-browser"><header><h2>PERSONAL PORTFOLIO</h2><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></header>
+      <div className="category-filter"><div className="category-menu"><button className="category-trigger" aria-expanded={categoriesOpen} aria-controls="project-category-menu" onClick={() => setCategoriesOpen(open => !open)}><span>CATEGORY</span><b>{category === 'All' ? 'ALL CATEGORIES' : category}</b><i>{categoriesOpen ? '-' : '+'}</i></button>{categoriesOpen && <div className="category-popover" id="project-category-menu" role="menu">{categories.map((item, index) => <button key={item} role="menuitemradio" aria-checked={category === item} className={category === item ? 'is-active' : ''} onClick={() => { setCategory(item); setCategoriesOpen(false); }}>{item !== 'All' && <b>{String(index).padStart(2, '0')}</b>}<span>{item === 'All' ? 'All categories' : item}</span><i>{category === item ? '*' : '>'}</i></button>)}</div>}</div><small>{String(visible.length).padStart(2, '0')} PROJECTS</small></div>
       <div className="project-grid">{visible.map(project => <button key={project.id} className="project-tile" onClick={event => openProject(event, project)}><img src={project.image} alt=""/><span><b>{String(project.serial).padStart(2, '0')}</b><strong>{project.title}</strong><small>{project.location} / {project.year}</small></span></button>)}</div>
       {!visible.length && <p className="empty-projects">Projects in this category will appear here when the owner publishes them.</p>}
     </div>
