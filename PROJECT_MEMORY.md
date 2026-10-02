@@ -94,9 +94,17 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Hardened project-title and metadata wrapping so long content remains inside the viewer grid on desktop and mobile.
 - Reinforced the `ABOUT / RESUME` window label contrast so every character remains legible.
 
+## October 2026 album counter and owner-access refinement
+
+- Added the current/total image count (for example, `3/10`) directly inside the folded bottom-right album-page corner without changing the approved page-turn interaction.
+- Assigned `caffinixtech@gmail.com` as the initial portfolio owner email.
+- Redesigned the owner entry screen around `THE SECRET PLACE`, with a tactile retro Back to Studio button, concise non-owner guidance, and a simplified `AUTHORISED OWNER ONLY` notice.
+- Renamed first-time setup messaging to `Manage your studio` and improved the account-switch action typography.
+- Documented the future Gmail SMTP environment-variable handover; no SMTP credentials or secrets are committed to the repository.
+
 ## Remaining work / future decisions
 
-1. Supply the client's final admin email and choose an email provider so verification codes and contact messages can be delivered in production.
+1. Configure Gmail SMTP delivery for verification codes and contact messages with a server-side Google App Password, then replace the sender credentials when the client takes ownership.
 2. Choose a production database and migrate the local `.data` prototype storage into it.
 3. Choose cloud image storage/transformation; local `public/uploads` is development-only and not durable on serverless hosting.
 4. Replace placeholder social/contact URLs and sample project data with final client content.

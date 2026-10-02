@@ -84,7 +84,7 @@ function ProjectViewer({ project, close }) {
     <div className={`viewer-image ${dragging ? 'is-dragging' : ''}`} onPointerDown={startGesture} onPointerMove={trackGesture} onPointerUp={endGesture} onPointerCancel={endGesture}>
       <img className="album-base" src={images[slide]} alt={`${project.title}, view ${slide + 1}`} draggable="false"/>
       {turn && <><img className={`album-page album-page--incoming album-page--${turn.direction > 0 ? 'next' : 'previous'}`} src={images[turn.next]} alt="" draggable="false"/><img className={`album-page album-page--outgoing album-page--${turn.direction > 0 ? 'next' : 'previous'}`} src={images[slide]} alt="" draggable="false" onAnimationEnd={finishTurn}/></>}
-      {images.length > 1 && <><div className="album-binding" aria-hidden="true">{Array.from({ length: 7 }, (_, index) => <i key={index}/>)}</div><div className="album-page-corner" aria-hidden="true"/></>}
+      {images.length > 1 && <><div className="album-binding" aria-hidden="true">{Array.from({ length: 7 }, (_, index) => <i key={index}/>)}</div><div className="album-page-corner" aria-label={`Image ${slide + 1} of ${images.length}`}><span>{slide + 1}/{images.length}</span></div></>}
     </div>
     <aside><span className="eyebrow">PROJECT {String(project.serial).padStart(2, '0')} / {project.type}</span><h2>{project.title}</h2><p>{project.summary}</p><dl><div><dt>LOCATION</dt><dd>{project.location}</dd></div><div><dt>YEAR</dt><dd>{project.year}</dd></div></dl></aside>
   </div>;

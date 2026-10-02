@@ -69,4 +69,4 @@ export async function getSession() {
 }
 
 export async function clearSession() { (await cookies()).delete(sessionName); }
-export function assignedAdminEmail() { return (process.env.ADMIN_EMAIL || 'hello@sherhanhossain.com').toLowerCase(); }
+export function assignedAdminEmail() { return (process.env.ADMIN_EMAIL || 'caffinixtech@gmail.com').toLowerCase(); }
