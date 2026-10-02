@@ -1,19 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import './styles.css';
+'use client';
 
-const projects = [
-  { title: 'Courtyard House', type: 'Residential', year: '2025', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=88', summary: 'A climate-aware family home organised around a shaded garden, bringing daylight, breeze and everyday rituals into the centre of the plan.' },
-  { title: 'Brick & Breeze', type: 'Hospitality', year: '2025', location: 'Chattogram', image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=88', summary: 'Tactile brickwork, deep openings and layered planting create a quiet retreat where building and landscape meet.' },
-  { title: 'Folded Light', type: 'Cultural', year: '2024', location: 'Sylhet', image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=88', summary: 'A public pavilion composed as a sequence of folded planes, animated throughout the day by movement and changing sunlight.' },
-  { title: 'House No. 08', type: 'Residential', year: '2024', location: 'Gazipur', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=88', summary: 'A low, horizontal residence framing long garden views and generous shared rooms for a multi-generational family.' },
-  { title: 'Common Ground', type: 'Workplace', year: '2023', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=88', summary: 'A flexible studio shaped by warm timber, honest structure and shared tables for focus, exchange and creative work.' },
-  { title: 'Riverstone Retreat', type: 'Hospitality', year: '2023', location: 'Bandarban', image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=88', summary: 'A hillside retreat that follows the natural contours, pairing local stone and timber with framed views across the valley.' },
-  { title: 'The Green Spine', type: 'Residential', year: '2022', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=88', summary: 'A compact urban home organised around a planted circulation spine that carries light and air through every level.' },
-  { title: 'Arc Gallery', type: 'Cultural', year: '2022', location: 'Rajshahi', image: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&w=1200&q=88', summary: 'A calm sequence of vaulted rooms creates an adaptable setting for exhibitions, workshops and public gatherings.' },
-  { title: 'Terracotta Court', type: 'Mixed Use', year: '2021', location: 'Khulna', image: 'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1200&q=88', summary: 'A shaded courtyard and perforated terracotta screens temper the tropical climate while giving the building a distinct civic identity.' },
-  { title: 'Lightwell Studio', type: 'Workplace', year: '2021', location: 'Dhaka', image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=88', summary: 'An adaptive workspace centred on a generous lightwell, with flexible rooms designed for collaboration and focused making.' },
-];
+/* eslint-disable @next/next/no-img-element */
+
+import React, { useEffect, useRef, useState } from 'react';
+import { projects } from './data/portfolio';
 
 const SvgIcon = ({ name, size = 22 }) => {
   const paths = {
@@ -77,12 +67,12 @@ function Modal({ type, project, close }) {
         <div className="modal-copy"><div className="eyebrow">{project.type} / {project.year}</div><h2>{project.title}</h2><p>{project.summary}</p><div className="project-meta"><span>Location</span><b>{project.location}</b><span>Discipline</span><b>Architecture</b></div></div>
       </div>}
       {type === 'portfolio' && <div className="modal-copy portfolio-modal"><div className="eyebrow">PERSONAL PORTFOLIO</div><h2>Selected work,<br/>across the web.</h2><div className="big-links"><a href="https://www.behance.net/" target="_blank" rel="noreferrer">BEHANCE <span>↗</span></a><a href="https://dribbble.com/" target="_blank" rel="noreferrer">DRIBBBLE <span>↗</span></a><a href="https://www.archdaily.com/" target="_blank" rel="noreferrer">ARCHDAILY <span>↗</span></a></div></div>}
-      {type === 'contact' && <div className="modal-copy contact-modal"><div className="eyebrow">READY TO WORK?</div><h2>LET'S SHAPE<br/><span>YOUR SPACE.</span></h2><p>For architecture, interior and visualisation enquiries, start with a quick email.</p><a className="talk-link" href="mailto:hello@sherhanhossain.com">HELLO@SHERHANHOSSAIN.COM <SvgIcon name="arrow"/></a></div>}
+      {type === 'contact' && <div className="modal-copy contact-modal"><div className="eyebrow">READY TO WORK?</div><h2>LET’S SHAPE<br/><span>YOUR SPACE.</span></h2><p>For architecture, interior and visualisation enquiries, start with a quick email.</p><a className="talk-link" href="mailto:hello@sherhanhossain.com">HELLO@SHERHANHOSSAIN.COM <SvgIcon name="arrow"/></a></div>}
     </div>
   </div>;
 }
 
-function App() {
+export default function PortfolioApp() {
   const introVariant = 'panels';
   const [intro, setIntro] = useState(true);
   const [modal, setModal] = useState(null);
@@ -133,18 +123,18 @@ function App() {
       <section className="portfolio-shell" aria-label="Sherhan Hossain architecture portfolio">
         <header className="topbar">
           <div className="avatar-frame">
-            <img className="avatar" src={`${import.meta.env.BASE_URL}dp.jpg`} alt="Sherhan Hossain"/>
+            <img className="avatar" src="/dp.jpg" alt="Sherhan Hossain"/>
           </div>
           <nav aria-label="Main navigation">
             <button aria-label="Home" data-label="HOME"><SvgIcon name="home"/></button>
             <button aria-label="About Sherhan" data-label="ABOUT" onClick={() => setModal('contact')}><SvgIcon name="user"/></button>
             <button aria-label="View portfolio" data-label="PORTFOLIO" onClick={() => setModal('portfolio')}><SvgIcon name="bag"/></button>
           </nav>
-          <button className="talk-button" onClick={() => setModal('contact')}><i>✱</i> LET'S TALK <i>✱</i></button>
+          <button className="talk-button" onClick={() => setModal('contact')}><i>✱</i> LET’S TALK <i>✱</i></button>
         </header>
 
         <section className="hero-panel">
-          <div className="eyebrow">HELLO, I'M SHERHAN HOSSAIN</div>
+          <div className="eyebrow">HELLO, I’M SHERHAN HOSSAIN</div>
           <h1><span>ARCHITECT</span><br/><b>&amp;</b> <em>DESIGNER</em></h1>
           <p>CRAFTING PURPOSEFUL SPACES FOR<br/>PEOPLE, PLACE &amp; EVERYDAY LIFE.</p>
           <div className="hero-actions">
@@ -194,5 +184,3 @@ function App() {
     {modal && <Modal type={modal} project={activeProject} close={() => setModal(null)}/>} 
   </>;
 }
-
-createRoot(document.getElementById('root')).render(<App/>);
