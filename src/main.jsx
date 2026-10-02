@@ -6,6 +6,10 @@ import Link from 'next/link';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { projects as initialProjects, services } from './data/portfolio';
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const isStaticPreview = process.env.NEXT_PUBLIC_STATIC_PREVIEW === 'true';
+const publicAsset = path => `${basePath}${path}`;
+
 const SvgIcon = ({ name, size = 22 }) => {
   const paths = {
     home: <><path d="M3 11.2 12 4l9 7.2"/><path d="M5.5 10v10h13V10M9.5 20v-6h5v6"/></>,
@@ -41,7 +45,7 @@ function Tool({ label, mark, tone }) { return <div className={`tool tool--${tone
 
 function ResumeModal({ close }) {
   return <div className="modal" role="dialog" aria-modal="true" aria-label="Sherhan Hossain resume" onMouseDown={event => event.target === event.currentTarget && close()}>
-    <div className="modal-card resume-window"><div className="retro-window-bar"><span>ABOUT / RESUME</span><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></div><div className="resume-paper"><img src="/resume.png" alt="Sherhan Hossain resume"/></div></div>
+    <div className="modal-card resume-window"><div className="retro-window-bar"><span>ABOUT / RESUME</span><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></div><div className="resume-paper"><img src={publicAsset('/resume.png')} alt="Sherhan Hossain resume"/></div></div>
   </div>;
 }
 
@@ -113,6 +117,13 @@ function ContactModal({ close }) {
     event.preventDefault(); setStatus({ busy: true, message: '', error: false });
     const form = event.currentTarget;
     const payload = Object.fromEntries(new FormData(form));
+    if (isStaticPreview) {
+      const subject = encodeURIComponent(`Portfolio enquiry from ${payload.name}`);
+      const body = encodeURIComponent(`${payload.message}\n\nFrom: ${payload.name}\nEmail: ${payload.email}`);
+      window.location.href = `mailto:hello@sherhanhossain.com?subject=${subject}&body=${body}`;
+      setStatus({ busy: false, message: 'Your email app is ready with the message.', error: false });
+      return;
+    }
     const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const result = await response.json();
     setStatus({ busy: false, message: result.message || result.error, error: !response.ok });
@@ -136,14 +147,14 @@ export default function PortfolioApp() {
   const marqueeProjects = useMemo(() => [...projects, ...projects], [projects]);
 
   useEffect(() => {
-    fetch('/api/portfolio').then(response => response.ok ? response.json() : null).then(data => data?.projects?.length && setProjects(data.projects)).catch(() => {});
+    if (!isStaticPreview) fetch('/api/portfolio').then(response => response.ok ? response.json() : null).then(data => data?.projects?.length && setProjects(data.projects)).catch(() => {});
     const onKey = event => event.key === 'Escape' && setModal(null);
     window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey);
   }, []);
   const openPortfolio = project => { setSelected(project || null); setModal('portfolio'); };
 
   return <>{intro && <Intro finish={() => setIntro(false)}/>}<main className="stage"><section className="portfolio-shell" aria-label="Sherhan Hossain architecture portfolio">
-    <header className="topbar"><div className="avatar-frame"><img className="avatar" src="/dp.jpg" alt="Sherhan Hossain"/></div><nav aria-label="Main navigation"><button aria-label="Home" data-label="HOME" onClick={() => setModal(null)}><SvgIcon name="home"/></button><button aria-label="About Sherhan" data-label="ABOUT" onClick={() => setModal('resume')}><SvgIcon name="user"/></button></nav><button className="talk-button" onClick={() => setModal('contact')}><i>✱</i> LET’S TALK <i>✱</i></button></header>
+    <header className="topbar"><div className="avatar-frame"><img className="avatar" src={publicAsset('/dp.jpg')} alt="Sherhan Hossain"/></div><nav aria-label="Main navigation"><button aria-label="Home" data-label="HOME" onClick={() => setModal(null)}><SvgIcon name="home"/></button><button aria-label="About Sherhan" data-label="ABOUT" onClick={() => setModal('resume')}><SvgIcon name="user"/></button></nav><button className="talk-button" onClick={() => setModal('contact')}><i>✱</i> LET’S TALK <i>✱</i></button></header>
     <section className="hero-panel"><div className="eyebrow">HELLO, I’M SHERHAN HOSSAIN</div><h1><span>ARCHITECT</span><br/><b>&amp;</b> <em>DESIGNER</em></h1><p>CRAFTING PURPOSEFUL SPACES FOR<br/>PEOPLE, PLACE &amp; EVERYDAY LIFE.</p><div className="hero-actions"><div className="socials" aria-label="Social links"><a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><SvgIcon name="linkedin"/></a><a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram"><SvgIcon name="instagram"/></a><a href="mailto:hello@sherhanhossain.com" aria-label="Email"><SvgIcon name="mail"/></a></div><button className="ready-button" onClick={() => setModal('contact')}>✱ READY TO WORK ✱</button></div></section>
     <section className="tools-panel"><h2>TOOLS</h2><div className="tools-row"><Tool label="AUTOCAD" mark="A" tone="red"/><Tool label="REVIT" mark="R" tone="pink"/><Tool label="SKETCHUP" mark="S" tone="red"/><Tool label="RHINO" mark="R" tone="pink"/><Tool label="ENSCAPE" mark="E" tone="red"/></div></section>
     <button className="portfolio-panel" onClick={() => openPortfolio()}><span>✱</span><i>✹</i> PERSONAL PORTFOLIO <i>✹</i><span>✱</span></button>

@@ -102,6 +102,14 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Renamed first-time setup messaging to `Manage your studio` and improved the account-switch action typography.
 - Documented the future Gmail SMTP environment-variable handover; no SMTP credentials or secrets are committed to the repository.
 
+## October 2026 GitHub Pages client preview
+
+- Published the latest `shovon_dev` portfolio presentation as a GitHub Pages client-review build at `https://shovon25657.github.io/Sherhan/`.
+- Added a conditional Next.js static-export configuration with the repository base path, while preserving the normal full-stack local build.
+- Updated the Pages workflow to deploy on pushes to `shovon_dev` without modifying `main`.
+- Kept the résumé and profile assets working under the GitHub repository sub-path.
+- In the static preview, the contact form opens a pre-filled email draft. Server-only admin authentication, persistence, and API actions remain in the source branch and require a Node-capable production host.
+
 ## Remaining work / future decisions
 
 1. Configure Gmail SMTP delivery for verification codes and contact messages with a server-side Google App Password, then replace the sender credentials when the client takes ownership.
@@ -111,7 +119,7 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 5. Build edit/delete, drag ordering, draft preview, and publishing controls for existing projects.
 6. Add dashboard controls for services, tools, profile, résumé, links, and site settings.
 7. Add rate limiting, password reset/recovery, verification attempt limits, audit logging, and a production auth review.
-8. Select hosting that supports the Next.js server runtime; GitHub Pages cannot run these APIs or the admin backend.
+8. Select production hosting that supports the Next.js server runtime; the GitHub Pages URL is the client-facing visual preview and cannot run the APIs or admin backend.
 9. Revisit optional copyright-free intro audio only if the client requests it.
 
 ## Guardrails for future changes
