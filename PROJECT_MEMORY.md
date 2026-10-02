@@ -84,6 +84,16 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Rebuilt the project viewer as a mouse- and touch-swipe photo album with bidirectional page-turn animation, previous/next buttons, an image counter, and a folded-corner `DRAG / SWIPE TO TURN` cue.
 - Disabled native image dragging inside the album so desktop swipe gestures remain reliable.
 
+## October 2026 responsive album polish
+
+- Simplified the automatic work reel to an unobstructed image flow with only solid three-pixel side edges, removing the translucent white overlay bars.
+- Updated project serial numbers to a cleaner monospaced typographic treatment.
+- Colored the `PORTFOLIO` word in the Personal Portfolio heading with the same coral-red used by the close control.
+- Replaced the project viewer's previous/next arrows, instruction strip, and page counter with a retro spiral album binding and a minimal folded page-corner cue.
+- Made forward and backward navigation use mirrored page-turn animations while retaining mouse-drag and touch-swipe gestures.
+- Hardened project-title and metadata wrapping so long content remains inside the viewer grid on desktop and mobile.
+- Reinforced the `ABOUT / RESUME` window label contrast so every character remains legible.
+
 ## Remaining work / future decisions
 
 1. Supply the client's final admin email and choose an email provider so verification codes and contact messages can be delivered in production.
