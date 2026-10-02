@@ -67,6 +67,13 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Added `.env.example` for the assigned admin email and production session secret.
 - Email verification displays its code only in local development. Production email delivery remains intentionally unconfigured until provider credentials are supplied.
 
+## October 2026 visual refinement
+
+- Centered the Home and About controls evenly between the profile portrait and Let’s Talk action.
+- Standardized the About window label to plain English `RESUME`.
+- Replaced the pale work-marquee edge fades with narrow retro coral, yellow, and cyan patterned rails.
+- Simplified the project-browser heading to `PERSONAL PORTFOLIO` and redesigned category filtering as numbered, color-coded discipline tabs with a live visible-project count.
+
 ## Remaining work / future decisions
 
 1. Supply the client's final admin email and choose an email provider so verification codes and contact messages can be delivered in production.

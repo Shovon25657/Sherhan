@@ -40,8 +40,8 @@ function Intro({ finish }) {
 function Tool({ label, mark, tone }) { return <div className={`tool tool--${tone}`}><div className="tool-burst"><span>{mark}</span></div><small>{label}</small></div>; }
 
 function ResumeModal({ close }) {
-  return <div className="modal" role="dialog" aria-modal="true" aria-label="Sherhan Hossain résumé" onMouseDown={event => event.target === event.currentTarget && close()}>
-    <div className="modal-card resume-window"><div className="retro-window-bar"><span>ABOUT / RÉSUMÉ</span><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></div><div className="resume-paper"><img src="/resume.png" alt="Sherhan Hossain résumé"/></div></div>
+  return <div className="modal" role="dialog" aria-modal="true" aria-label="Sherhan Hossain resume" onMouseDown={event => event.target === event.currentTarget && close()}>
+    <div className="modal-card resume-window"><div className="retro-window-bar"><span>ABOUT / RESUME</span><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></div><div className="resume-paper"><img src="/resume.png" alt="Sherhan Hossain resume"/></div></div>
   </div>;
 }
 
@@ -60,12 +60,12 @@ function PortfolioModal({ projects, selected, close }) {
   const categories = ['All', ...services];
   const [category, setCategory] = useState('All');
   const [active, setActive] = useState(selected || null);
-  const visible = category === 'All' ? projects : projects.filter(project => project.type.toLowerCase().includes(category.split(' ')[0].toLowerCase()));
+  const visible = category === 'All' ? projects : projects.filter(project => project.type.toLowerCase() === category.toLowerCase());
   const openProject = (event, project) => { event.currentTarget.closest('.portfolio-overlay')?.scrollTo({ top: 0 }); setActive(project); };
   if (active) return <div className="modal portfolio-overlay"><ProjectViewer project={active} close={() => setActive(null)}/></div>;
   return <div className="modal portfolio-overlay" role="dialog" aria-modal="true" aria-label="Personal portfolio">
-    <div className="portfolio-browser"><header><div><span className="eyebrow">PERSONAL PORTFOLIO</span><h2>SELECTED<br/><em>PROJECTS.</em></h2></div><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></header>
-      <div className="category-tabs" aria-label="Project categories">{categories.map(item => <button key={item} className={category === item ? 'is-active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div>
+    <div className="portfolio-browser"><header><h2>PERSONAL<br/><em>PORTFOLIO.</em></h2><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></header>
+      <div className="category-filter"><div className="category-caption"><span>FILTER BY DISCIPLINE</span><small>{String(visible.length).padStart(2, '0')} PROJECTS</small></div><div className="category-tabs" aria-label="Project categories">{categories.map((item, index) => <button key={item} className={category === item ? 'is-active' : ''} onClick={() => setCategory(item)}><b>{String(index + 1).padStart(2, '0')}</b><span>{item}</span></button>)}</div></div>
       <div className="project-grid">{visible.map(project => <button key={project.id} className="project-tile" onClick={event => openProject(event, project)}><img src={project.image} alt=""/><span><b>{String(project.serial).padStart(2, '0')}</b><strong>{project.title}</strong><small>{project.location} / {project.year}</small></span></button>)}</div>
       {!visible.length && <p className="empty-projects">Projects in this category will appear here when the owner publishes them.</p>}
     </div>
