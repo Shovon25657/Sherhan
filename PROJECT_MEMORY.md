@@ -11,11 +11,11 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Retro, cartoon-like editorial layout with strong black outlines, warm paper, coral, cyan, red, pink, and yellow.
 - Full-screen yellow introduction with the selected “Panel Reveal” animation.
 - Intro sequence reveals the name first, then descriptor and Enter Studio control.
-- Main portfolio stays fixed in the viewport; the horizontal work rail responds to wheel input with smooth momentum.
-- Work cards open project details in a modal with one click.
+- Main portfolio stays fixed in the viewport; the work rail is a seamless, automatic horizontal loop that pauses while hovered or keyboard-focused so cards remain clickable.
+- Work cards open the corresponding project inside the full personal-portfolio experience.
 - Navigation icons show labels on hover.
 - Social icons link to LinkedIn, Instagram, and email.
-- Portfolio and contact panels open modal experiences.
+- Portfolio, résumé, and contact panels open modal experiences.
 - Profile image uses `public/dp.jpg` and is deliberately enlarged/cropped for visibility.
 - No intro sound is currently included. Sound was explored and deliberately postponed.
 
@@ -52,23 +52,38 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Added shared portfolio-data scaffolding for future database integration.
 - Updated documentation and ignore rules for Next.js.
 
+## October 2026 interaction and admin milestone
+
+- Simplified hero navigation to Home and About only, with improved alignment.
+- Connected About to the supplied `public/resume.png` in a scrollable retro résumé window.
+- Replaced the manual work rail with a duplicated, seamless automatic marquee; removed View More and the scroll instruction.
+- Built a full personal-portfolio browser with six service categories, square project tiles, responsive layout, project metadata, and full-screen multi-image slideshow views.
+- Made work-reel cards route directly into their corresponding portfolio-project view.
+- Added a visitor contact form with server validation and local prototype message persistence.
+- Added the bottom-right retro `S` owner/admin entry point.
+- Added first-time owner setup: assigned-email validation, expiring verification code, username/password creation, scrypt password hashing, signed HTTP-only session cookies, login, logout, and protected `/admin` access.
+- Added time-aware dashboard greeting based on the visitor computer clock.
+- Added an authenticated project publishing form with title, category, description, serial, location, year, and multi-image uploads. Locally published projects feed both the public work reel and personal portfolio.
+- Added `.env.example` for the assigned admin email and production session secret.
+- Email verification displays its code only in local development. Production email delivery remains intentionally unconfigured until provider credentials are supplied.
+
 ## Remaining work / future decisions
 
-1. Confirm exactly which fields the owner should edit in the admin dashboard.
-2. Choose authentication provider and define owner/admin roles.
-3. Choose a production database and model projects, services, tools, profile, social links, and site settings.
-4. Choose image storage and transformation service for project uploads.
-5. Replace placeholder social/contact URLs and sample project data with final client content.
-6. Connect the public portfolio to database-backed content.
-7. Build create/edit/delete, ordering, draft preview, and publishing controls.
-8. Add validation, loading/error states, audit-safe destructive actions, and access protection.
-9. Select hosting that supports the Next.js server runtime; GitHub Pages cannot run server Route Handlers or a dynamic admin backend.
-10. Revisit optional copyright-free intro audio only if the client requests it.
+1. Supply the client's final admin email and choose an email provider so verification codes and contact messages can be delivered in production.
+2. Choose a production database and migrate the local `.data` prototype storage into it.
+3. Choose cloud image storage/transformation; local `public/uploads` is development-only and not durable on serverless hosting.
+4. Replace placeholder social/contact URLs and sample project data with final client content.
+5. Build edit/delete, drag ordering, draft preview, and publishing controls for existing projects.
+6. Add dashboard controls for services, tools, profile, résumé, links, and site settings.
+7. Add rate limiting, password reset/recovery, verification attempt limits, audit logging, and a production auth review.
+8. Select hosting that supports the Next.js server runtime; GitHub Pages cannot run these APIs or the admin backend.
+9. Revisit optional copyright-free intro audio only if the client requests it.
 
 ## Guardrails for future changes
 
 - Preserve the current landing-page layout and theme unless the user explicitly requests a redesign.
-- The page itself should not scroll during the portfolio experience; only the work rail should horizontally scroll.
+- The landing page itself should not scroll; layered portfolio and résumé experiences may scroll within their own windows.
+- Keep the work rail as an automatic infinite loop, with hover/focus pause for reliable project selection.
 - Keep the Panel Reveal intro as the selected animation.
 - Do not add automatic music without explicit approval.
 - Do not modify or deploy the `main` branch unless explicitly requested.

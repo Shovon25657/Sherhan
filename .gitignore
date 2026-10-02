@@ -2,6 +2,8 @@ node_modules/
 dist/
 .vite/
 .next/
+.data/
+public/uploads/
 out/
 .env*
 !.env.example
