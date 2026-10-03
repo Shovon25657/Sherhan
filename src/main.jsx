@@ -17,7 +17,6 @@ const SvgIcon = ({ name, size = 22 }) => {
     user: <><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-4 3-6 7-6s6.4 2 7 6"/></>,
     mail: <><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 7 9-7"/></>,
     copy: <><rect x="8" y="8" width="11" height="11" rx="1"/><path d="M16 8V5H5v11h3"/></>,
-    download: <><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M5 20h14"/></>,
     close: <><path d="m6 6 12 12M18 6 6 18"/></>,
     arrow: <><path d="M5 12h14M13 6l6 6-6 6"/></>,
     left: <path d="m15 18-6-6 6-6"/>, right: <path d="m9 18 6-6-6-6"/>,
@@ -155,7 +154,7 @@ function Tool({ label, mark, tone }) { return <div className={`tool tool--${tone
 
 function ResumeModal({ close }) {
   return <div className="modal" role="dialog" aria-modal="true" aria-label="Sherhan Hossain resume" onMouseDown={event => event.target === event.currentTarget && close()}>
-    <div className="modal-card resume-window"><div className="retro-window-bar"><span>ABOUT / RESUME</span><div className="window-actions"><a href={publicAsset('/resume.png')} download="Sherhan-Hossain-Resume.png" aria-label="Download Sherhan Hossain resume" title="Download resume"><SvgIcon name="download"/></a><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></div></div><div className="resume-paper"><img src={publicAsset('/resume.png')} alt="Sherhan Hossain resume"/></div></div>
+    <div className="modal-card resume-window"><div className="retro-window-bar"><span>ABOUT / RESUME</span><div className="window-actions"><a href={publicAsset('/resume.png')} download="Sherhan-Hossain-Resume.png" aria-label="Download Sherhan Hossain resume">DOWNLOAD?</a><button onClick={close} aria-label="Close"><SvgIcon name="close"/></button></div></div><div className="resume-paper"><img src={publicAsset('/resume.png')} alt="Sherhan Hossain resume"/></div></div>
   </div>;
 }
 
@@ -245,7 +244,7 @@ function ContactModal({ close }) {
     setStatus({ busy: false, message: result.message || result.error, error: !response.ok });
     if (response.ok) form.reset();
   };
-  return <div className="modal" role="dialog" aria-modal="true" onMouseDown={event => event.target === event.currentTarget && close()}><div className="modal-card contact-window"><button className="modal-close" onClick={close} aria-label="Close"><SvgIcon name="close"/></button><div className="contact-intro"><span className="eyebrow">LET’S MAKE SPACE FOR AN IDEA</span><h2>WHAT’S ON<br/><em>YOUR MIND?</em></h2><p>Share a thought, a site, or the start of a project. Sherhan would love to hear the story behind it.</p><div className="contact-email"><a href="mailto:hello@sherhanhossain.com">HELLO@SHERHANHOSSAIN.COM</a><button type="button" onClick={copyEmail} aria-label="Copy email address"><SvgIcon name="copy" size={17}/><span>{copied ? 'COPIED' : 'COPY'}</span></button></div></div><form className="contact-form" onSubmit={submit}><label>YOUR NAME<input name="name" required minLength="2" placeholder="How should I address you?"/></label><label>YOUR EMAIL<input name="email" type="email" required placeholder="you@example.com"/></label><label>YOUR MESSAGE<textarea name="message" required minLength="10" rows="6" placeholder="Tell me what you are imagining…"/></label><button disabled={status.busy}>{status.busy ? 'SENDING…' : 'SEND YOUR THOUGHT →'}</button>{status.message && <p className={status.error ? 'form-error' : 'form-success'} role="status">{status.message}</p>}</form></div></div>;
+  return <div className="modal" role="dialog" aria-modal="true" onMouseDown={event => event.target === event.currentTarget && close()}><div className="modal-card contact-window"><button className="modal-close" onClick={close} aria-label="Close"><SvgIcon name="close"/></button><div className="contact-intro"><span className="eyebrow">LET’S MAKE SPACE FOR AN IDEA</span><h2>WHAT’S ON<br/><em>YOUR MIND?</em></h2><p>Share a thought, a site, or the start of a project. Sherhan would love to hear the story behind it.</p><div className="contact-email"><a href="mailto:hello@sherhanhossain.com">HELLO@SHERHANHOSSAIN.COM</a><button className={copied ? 'is-copied' : ''} type="button" onClick={copyEmail} aria-label={copied ? 'Email address copied' : 'Copy email address'} title={copied ? 'Copied!' : 'Copy email'}><SvgIcon name="copy" size={14}/></button><span className="visually-hidden" aria-live="polite">{copied ? 'Email address copied.' : ''}</span></div></div><form className="contact-form" onSubmit={submit}><label>YOUR NAME<input name="name" required minLength="2" placeholder="How should I address you?"/></label><label>YOUR EMAIL<input name="email" type="email" required placeholder="you@example.com"/></label><label>YOUR MESSAGE<textarea name="message" required minLength="10" rows="6" placeholder="Tell me what you are imagining…"/></label><button disabled={status.busy}>{status.busy ? 'SENDING…' : 'SEND YOUR THOUGHT →'}</button>{status.message && <p className={status.error ? 'form-error' : 'form-success'} role="status">{status.message}</p>}</form></div></div>;
 }
 
 function ModalLayer({ type, projects, selected, close }) {

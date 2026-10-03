@@ -41,7 +41,7 @@ export async function verifyPassword(password, admin) {
 
 export function issueCode(email) {
   const code = String(crypto.randomInt(100000, 1000000));
-  pendingCodes.set(email.toLowerCase(), { codeHash: sign(code), expires: Date.now() + 10 * 60 * 1000 });
+  pendingCodes.set(email.toLowerCase(), { codeHash: sign(code), expires: Date.now() + 5 * 60 * 1000 });
   return code;
 }
 
@@ -66,6 +66,11 @@ export async function getSession() {
     const session = JSON.parse(Buffer.from(payload, 'base64url').toString());
     return session.expires > Date.now() ? session : null;
   } catch { return null; }
+}
+
+export async function getOwnerSession() {
+  const [admin, session] = await Promise.all([readAdmin(), getSession()]);
+  return admin && session?.username === admin.username ? session : null;
 }
 
 export async function clearSession() { (await cookies()).delete(sessionName); }

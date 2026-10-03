@@ -120,13 +120,18 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 
 - Confirmed that every first-time visitor sees the movable `S` owner button in the bottom-right corner; only an explicitly saved visitor position overrides that default.
 - Connected first-time owner setup to Gmail SMTP using Nodemailer and the assigned `caffinixtech@gmail.com` address.
-- Kept verification codes numeric and six digits long, with a ten-minute expiry and one-time use.
+- Kept verification codes numeric and six digits long, with a five-minute expiry and one-time use.
 - Added a responsive retro HTML verification email plus a plain-text fallback, with the subject `Hey Sherhan — entering your secret place?`.
 - SMTP credentials remain server-only environment variables. Local development still shows a clearly labeled development code when SMTP has not yet been configured; production never exposes a code in the response.
 - Created and configured the dedicated `Sherhan Portfolio SMTP` Google App Password locally, then verified end-to-end delivery to `caffinixtech@gmail.com`. Gmail rendered the retro message correctly and the live API response did not expose the verification code.
-- Refined the email subject to `Hey Sharon, entering your secret place?`, separated the greeting and question in the retro heading, and made the numeric code a single selectable value. Email clients block clipboard scripts, so the message labels the code for normal selection/copy instead of showing a non-functional button.
+- Refined the email subject and retro heading to `Hey Sherhan! Entering your secret place?`, and made the numeric code a single selectable value. Email clients block clipboard scripts, so the message labels the code for press-and-hold or normal selection/copy instead of showing a non-functional button.
 - Standardised tactile hover/focus motion across the owner-authentication actions and renamed the sign-in action to `ENTER MY SPACE`.
 - Added a real clipboard control beside the public contact email and a download control in the résumé window.
+- Refined those controls after review: the résumé action is now a compact retro `DOWNLOAD?` text button beside the close button, and the contact copy action is a small icon-only control with accessible copied feedback.
+- Reset the local owner record so the first-time email verification and credential-creation flow can be tested again; the assigned Gmail address and SMTP credentials remain configured locally for delivery.
+- Owner sessions are now accepted only while a matching owner record exists, so resetting setup also invalidates any previously issued browser session.
+- Added an in-place resend control beside the verification-code field. It issues a fresh email/code, invalidates the previous code, restarts the five-minute validity window, and exposes a `Send code again` hover/focus label.
+- Increased the spacing and legibility of the résumé `DOWNLOAD?` action, and reduced the contact-email copy control to a tiny icon aligned with the email text.
 
 ## Remaining work / future decisions
 

@@ -1,11 +1,11 @@
 import crypto from 'node:crypto';
 import { addProject, getProjects } from '../../../src/lib/content';
-import { getSession } from '../../../src/lib/auth';
+import { getOwnerSession } from '../../../src/lib/auth';
 
 export async function GET() { return Response.json({ projects: await getProjects() }); }
 
 export async function POST(request) {
-  if (!(await getSession())) return Response.json({ error: 'Sign in as the owner first.' }, { status: 401 });
+  if (!(await getOwnerSession())) return Response.json({ error: 'Sign in as the owner first.' }, { status: 401 });
   const form = await request.formData();
   const title = String(form.get('title') || '').trim();
   const type = String(form.get('category') || '').trim();
