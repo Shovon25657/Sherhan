@@ -123,6 +123,7 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Kept verification codes numeric and six digits long, with a ten-minute expiry and one-time use.
 - Added a responsive retro HTML verification email plus a plain-text fallback, with the subject `Hey Sherhan — entering your secret place?`.
 - SMTP credentials remain server-only environment variables. Local development still shows a clearly labeled development code when SMTP has not yet been configured; production never exposes a code in the response.
+- Created and configured the dedicated `Sherhan Portfolio SMTP` Google App Password locally, then verified end-to-end delivery to `caffinixtech@gmail.com`. Gmail rendered the retro message correctly and the live API response did not expose the verification code.
 
 ## Remaining work / future decisions
 
