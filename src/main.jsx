@@ -9,6 +9,7 @@ import { projects as initialProjects, services } from './data/portfolio';
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const isStaticPreview = process.env.NEXT_PUBLIC_STATIC_PREVIEW === 'true';
 const publicAsset = path => `${basePath}${path}`;
+const adminTriggerPositionKey = 'sherhan-admin-trigger-position';
 
 const SvgIcon = ({ name, size = 22 }) => {
   const paths = {
@@ -23,6 +24,113 @@ const SvgIcon = ({ name, size = 22 }) => {
   };
   return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 };
+
+function DraggableAdminTrigger() {
+  const triggerRef = useRef(null);
+  const gesture = useRef(null);
+  const latestPosition = useRef(null);
+  const suppressClick = useRef(false);
+  const [position, setPosition] = useState(null);
+  const [dragging, setDragging] = useState(false);
+
+  const clampToViewport = (x, y) => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    const width = rect?.width || 46;
+    const height = rect?.height || 46;
+    const gutter = 10;
+    return {
+      x: Math.min(Math.max(x, gutter), Math.max(gutter, window.innerWidth - width - gutter)),
+      y: Math.min(Math.max(y, gutter), Math.max(gutter, window.innerHeight - height - gutter)),
+    };
+  };
+
+  const rememberPosition = next => {
+    latestPosition.current = next;
+    setPosition(next);
+  };
+
+  useEffect(() => {
+    let restoreFrame;
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(adminTriggerPositionKey));
+      if (Number.isFinite(saved?.x) && Number.isFinite(saved?.y)) {
+        restoreFrame = window.requestAnimationFrame(() => rememberPosition(clampToViewport(saved.x, saved.y)));
+      }
+    } catch { /* Keep the default corner when storage is unavailable. */ }
+
+    const keepVisible = () => setPosition(current => {
+      if (!current) return current;
+      const next = clampToViewport(current.x, current.y);
+      latestPosition.current = next;
+      return next;
+    });
+    window.addEventListener('resize', keepVisible);
+    return () => {
+      if (restoreFrame) window.cancelAnimationFrame(restoreFrame);
+      window.removeEventListener('resize', keepVisible);
+    };
+  }, []);
+
+  const startDrag = event => {
+    if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    gesture.current = {
+      id: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      moved: false,
+    };
+    suppressClick.current = false;
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const moveTrigger = event => {
+    const current = gesture.current;
+    if (!current || current.id !== event.pointerId) return;
+    if (!current.moved && Math.hypot(event.clientX - current.startX, event.clientY - current.startY) >= 5) {
+      current.moved = true;
+      setDragging(true);
+    }
+    if (!current.moved) return;
+    event.preventDefault();
+    rememberPosition(clampToViewport(event.clientX - current.offsetX, event.clientY - current.offsetY));
+  };
+
+  const finishDrag = event => {
+    const current = gesture.current;
+    if (!current || current.id !== event.pointerId) return;
+    suppressClick.current = current.moved;
+    gesture.current = null;
+    setDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if (current.moved && latestPosition.current) {
+      try { window.localStorage.setItem(adminTriggerPositionKey, JSON.stringify(latestPosition.current)); } catch { /* Position persistence is optional. */ }
+    }
+  };
+
+  const handleClick = event => {
+    if (!suppressClick.current) return;
+    event.preventDefault();
+    suppressClick.current = false;
+  };
+
+  return <Link
+    ref={triggerRef}
+    className={`admin-trigger ${dragging ? 'is-dragging' : ''}`}
+    href="/admin/login"
+    aria-label="Open owner administration. Drag to move this button."
+    title="Drag to move • Click for owner admin"
+    draggable={false}
+    style={position ? { left: position.x, top: position.y, right: 'auto', bottom: 'auto' } : undefined}
+    onPointerDown={startDrag}
+    onPointerMove={moveTrigger}
+    onPointerUp={finishDrag}
+    onPointerCancel={finishDrag}
+    onClick={handleClick}
+  >S</Link>;
+}
 
 function IntroWord({ children, offset = 0 }) {
   return <span className="intro-word" data-text={children}>{[...children].map((letter, index) => <i className="intro-letter" style={{ '--letter': index + offset }} key={`${letter}-${index}`}>{letter}</i>)}</span>;
@@ -160,5 +268,5 @@ export default function PortfolioApp() {
     <button className="portfolio-panel" onClick={() => openPortfolio()}><span>✱</span><i>✹</i> PERSONAL PORTFOLIO <i>✹</i><span>✱</span></button>
     <section className="services-panel"><h2>SERVICES</h2><div className="service-grid">{services.map(service => <div key={service}>{service.toUpperCase()}</div>)}</div></section>
     <section className="works-panel"><div className="works-heading"><h2>WORK</h2></div><div className="works-marquee"><div className="works-track">{marqueeProjects.map((project, index) => <button className="work-card" key={`${project.id}-${index}`} onClick={() => openPortfolio(project)} aria-label={`Explore ${project.title}`}><img src={project.image} alt=""/><span><b>{String(project.serial).padStart(2, '0')}</b><em>{project.title}</em><small>{project.year}</small></span></button>)}</div></div></section>
-  </section><Link className="admin-trigger" href="/admin/login" aria-label="Open owner administration" title="Owner admin">S</Link></main>{modal && <ModalLayer type={modal} projects={projects} selected={selected} close={() => setModal(null)}/>}</>;
+  </section><DraggableAdminTrigger/></main>{modal && <ModalLayer type={modal} projects={projects} selected={selected} close={() => setModal(null)}/>}</>;
 }

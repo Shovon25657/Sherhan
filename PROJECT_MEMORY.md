@@ -1,6 +1,6 @@
 # Sherhan Portfolio — Project Memory
 
-Last updated: 2026-10-02
+Last updated: 2026-10-04
 
 ## Project concept
 
@@ -110,9 +110,23 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Kept the résumé and profile assets working under the GitHub repository sub-path.
 - In the static preview, the contact form opens a pre-filled email draft. Server-only admin authentication, persistence, and API actions remain in the source branch and require a Node-capable production host.
 
+## October 2026 movable owner access
+
+- Made the floating `S` owner/admin button draggable with mouse, pen, or touch while preserving a normal click to open owner login.
+- The chosen position is kept inside the viewport, re-clamped after window resizing, and remembered in that visitor's browser with local storage.
+- This interaction is currently local-only and awaits client approval before committing or publishing.
+
+## October 2026 owner email verification
+
+- Confirmed that every first-time visitor sees the movable `S` owner button in the bottom-right corner; only an explicitly saved visitor position overrides that default.
+- Connected first-time owner setup to Gmail SMTP using Nodemailer and the assigned `caffinixtech@gmail.com` address.
+- Kept verification codes numeric and six digits long, with a ten-minute expiry and one-time use.
+- Added a responsive retro HTML verification email plus a plain-text fallback, with the subject `Hey Sherhan — entering your secret place?`.
+- SMTP credentials remain server-only environment variables. Local development still shows a clearly labeled development code when SMTP has not yet been configured; production never exposes a code in the response.
+
 ## Remaining work / future decisions
 
-1. Configure Gmail SMTP delivery for verification codes and contact messages with a server-side Google App Password, then replace the sender credentials when the client takes ownership.
+1. Add the temporary Gmail App Password to local/server environment variables, test real verification delivery, then replace those values with the client's Gmail credentials at handover.
 2. Choose a production database and migrate the local `.data` prototype storage into it.
 3. Choose cloud image storage/transformation; local `public/uploads` is development-only and not durable on serverless hosting.
 4. Replace placeholder social/contact URLs and sample project data with final client content.
