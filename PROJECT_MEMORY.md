@@ -124,6 +124,9 @@ Sherhan Hossain is an architect. This project is his interactive portfolio websi
 - Added a responsive retro HTML verification email plus a plain-text fallback, with the subject `Hey Sherhan — entering your secret place?`.
 - SMTP credentials remain server-only environment variables. Local development still shows a clearly labeled development code when SMTP has not yet been configured; production never exposes a code in the response.
 - Created and configured the dedicated `Sherhan Portfolio SMTP` Google App Password locally, then verified end-to-end delivery to `caffinixtech@gmail.com`. Gmail rendered the retro message correctly and the live API response did not expose the verification code.
+- Refined the email subject to `Hey Sharon, entering your secret place?`, separated the greeting and question in the retro heading, and made the numeric code a single selectable value. Email clients block clipboard scripts, so the message labels the code for normal selection/copy instead of showing a non-functional button.
+- Standardised tactile hover/focus motion across the owner-authentication actions and renamed the sign-in action to `ENTER MY SPACE`.
+- Added a real clipboard control beside the public contact email and a download control in the résumé window.
 
 ## Remaining work / future decisions
 
